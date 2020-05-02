@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shapeup/pages/class_list.dart';
 import 'file:///D:/App_DEV/flipr_kanban/lib/screens/forgot_password.dart';
 import 'package:shapeup/pages/intro_screen.dart';
 import 'package:shapeup/pages/login.dart';
@@ -22,7 +23,7 @@ class MyApp extends StatelessWidget {
         // closer together (more dense) than on mobile platforms.
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      initialRoute: PdfViewer.id,
+      initialRoute: WelcomeScreen.id,
       routes: {
         IntroScreen.id:(context)=>IntroScreen(),
         LoginScreen.id:(context)=>LoginScreen(),
@@ -30,6 +31,7 @@ class MyApp extends StatelessWidget {
         WelcomeScreen.id:(context)=>WelcomeScreen(),
         RegistrationScreen.id:(context)=>RegistrationScreen(),
         PdfViewer.id:(context)=>PdfViewer(),
+        ClassList.id:(context)=>ClassList(),
       },
     );
   }

@@ -1,5 +1,6 @@
 import 'package:introduction_screen/introduction_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:shapeup/pages/class_list.dart';
 import 'login.dart';
 
 class IntroScreen extends StatefulWidget {
@@ -13,8 +14,7 @@ class _IntroScreenState extends State<IntroScreen> {
   final introKey = GlobalKey<IntroductionScreenState>();
 
   void _onIntroEnd(context) {
-//    Navigator.pushNamed(context, LoginScreen.id);
-  print("Classes");
+    Navigator.pushNamed(context, ClassList.id);
   }
 
   Widget _buildImage(String assetName) {

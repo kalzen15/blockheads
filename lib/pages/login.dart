@@ -3,6 +3,7 @@ import 'package:shapeup/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
+import 'package:shapeup/pages/class_list.dart';
 import 'file:///D:/App_DEV/flipr_kanban/lib/screens/forgot_password.dart';
 import '../widgets/button.dart';
 
@@ -29,7 +30,7 @@ class _LoginScreenState extends State<LoginScreen> {
     getUser().then((user) {
       if (user != null) {
         print("Happier");
-//        Navigator.pushReplacementNamed(context, BoardsPage.id);
+        Navigator.pushReplacementNamed(context, ClassList.id);
       }
     });
   }
