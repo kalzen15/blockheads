@@ -29,7 +29,6 @@ class _LoginScreenState extends State<LoginScreen> {
     super.initState();
     getUser().then((user) {
       if (user != null) {
-        print("Happier");
         Navigator.pushReplacementNamed(context, ClassList.id);
       }
     });
@@ -52,7 +51,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   tag: 'logo',
                   child: Container(
                     height: 200.0,
-                    child: Image.asset('assets/img1.jpg'),
+                    child: Image.asset('assets/logo.png'),
                   ),
                 ),
               ),
@@ -98,8 +97,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         email: email, password: password);
 
                     if (user != null) {
-                      print('Happy');
-//                      Navigator.pushReplacementNamed(context, BoardsPage.id);
+
+                      Navigator.pushReplacementNamed(context, ClassList.id);
                     }
                     setState(() {
                       showSpinner = false;

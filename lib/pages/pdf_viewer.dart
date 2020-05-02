@@ -1,11 +1,7 @@
-import 'dart:async';
-import 'dart:io';
-
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:dio/dio.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:flutter_pdfview/flutter_pdfview.dart';
+import 'package:open_file/open_file.dart';
 
 class PdfViewer extends StatefulWidget {
   static const String id = 'pdf';
@@ -14,191 +10,101 @@ class PdfViewer extends StatefulWidget {
   PdfViewer(this.url);
 
   @override
-  _PdfViewerState createState() => _PdfViewerState();
+  PdfViewerState createState() {
+    return new PdfViewerState();
+  }
 }
 
-class _PdfViewerState extends State<PdfViewer> {
-  String pathPDF = null;
-  String corruptedPathPDF = "";
-  String url;
+class PdfViewerState extends State<PdfViewer> {
+  String imgUrl;
 
-  @override
-  void initState() {
-    url = widget.url;
-    super.initState();
-//    fromAsset('assets/HackCoVIT2020_Problem_Statements.pdf', 'HackCoVIT2020_Problem_Statements.pdf').then((f) {
-//      setState(() {
-//        corruptedPathPDF = f.path;
-//      });
-//    });
-//    fromAsset('assets/HackCoVIT2020_Problem_Statements.pdf', 'HackCoVIT2020_Problem_Statements.pdf').then((f) {
-//      setState(() {
-//        pathPDF = f.path;
-//      });
-//    });
-    createFileOfPdfUrl().then((f) {
-      setState(() {
-        pathPDF = f.path;
-        print(pathPDF);
-      });
+  bool downloading = false;
+  var progressString = "";
+  String _openResult = 'Unknown';
+
+  Future<void> openFile() async {
+    var dir = await getApplicationDocumentsDirectory();
+    final filename = imgUrl.substring(imgUrl.lastIndexOf("/") + 1);
+    final filePath = '${dir.path}/' + filename;
+
+    final result = await OpenFile.open(filePath);
+
+    setState(() {
+      _openResult = "type=${result.type}  message=${result.message}";
     });
   }
 
-  Future<File> createFileOfPdfUrl() async {
-    print(url);
-    final filename = url.substring(url.lastIndexOf("/") + 1);
-    var request = await HttpClient().getUrl(Uri.parse(url));
-    var response = await request.close();
-    var bytes = await consolidateHttpClientResponseBytes(response);
-    String dir = (await getApplicationDocumentsDirectory()).path;
-    File file = new File('$dir/$filename');
-    await file.writeAsBytes(bytes);
-    print("hello");
-    return file;
-
+  @override
+  void initState() {
+    super.initState();
+    imgUrl = widget.url;
+    setState(() {
+      downloading = true;
+    });
+    downloadFile();
   }
 
-  Future<File> fromAsset(String asset, String filename) async {
-    // To open from assets, you can copy them to the app storage folder, and the access them "locally"
-    Completer<File> completer = Completer();
+  Future<void> downloadFile() async {
+    Dio dio = Dio();
 
     try {
       var dir = await getApplicationDocumentsDirectory();
-      File file = File("${dir.path}/$filename");
+      final filename = imgUrl.substring(imgUrl.lastIndexOf("/") + 1);
 
-      var data = await rootBundle.load(asset);
-      var bytes = data.buffer.asUint8List();
-      File assetFile = await file.writeAsBytes(bytes, flush: true);
-      return assetFile;
+      await dio.download(imgUrl, "${dir.path}/" + filename,
+          onReceiveProgress: (rec, total) {
+        print("Rec: $rec , Total: $total");
+
+        setState(() {
+          downloading = true;
+          progressString = ((rec / total) * 100).toStringAsFixed(0) + "%";
+        });
+      });
     } catch (e) {
-      throw Exception('Error parsing asset file!');
+      print(e);
     }
+
+    setState(() {
+      downloading = false;
+      progressString = "Completed";
+    });
+    print("Download completed");
   }
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter PDF View',
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        appBar: AppBar(title: const Text('View Chapter')),
-        body: Center(child: Builder(
-          builder: (BuildContext context) {
-            return Column(
-              children: <Widget>[
-                RaisedButton(
-                  child: Text("Open PDF"),
-                  onPressed: () {
-                    if (pathPDF != null) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => PDFScreen(path: pathPDF),
-                        ),
-                      );
-                    }
-                  },
-                ),
-              ],
-            );
-          },
-        )),
-      ),
-    );
-  }
-}
-
-class PDFScreen extends StatefulWidget {
-  final String path;
-
-  PDFScreen({Key key, this.path}) : super(key: key);
-
-  _PDFScreenState createState() => _PDFScreenState();
-}
-
-class _PDFScreenState extends State<PDFScreen> with WidgetsBindingObserver {
-  final Completer<PDFViewController> _controller =
-      Completer<PDFViewController>();
-  int pages = 0;
-  int currentPage = 0;
-  bool isReady = false;
-  String errorMessage = '';
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Document"),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.share),
-            onPressed: () {},
-          ),
-        ],
+        title: Text("AppBar"),
       ),
-      body: Stack(
-        children: <Widget>[
-          PDFView(
-            filePath: widget.path,
-//            enableSwipe: true,
-//            swipeHorizontal: true,
-            autoSpacing: true,
-            pageFling: true,
-            defaultPage: currentPage,
-            fitPolicy: FitPolicy.HEIGHT,
-            onRender: (_pages) {
-              setState(() {
-                pages = _pages;
-                isReady = true;
-              });
-            },
-            onError: (error) {
-              setState(() {
-                errorMessage = error.toString();
-              });
-              print(error.toString());
-            },
-            onPageError: (page, error) {
-              setState(() {
-                errorMessage = '$page: ${error.toString()}';
-              });
-              print('$page: ${error.toString()}');
-            },
-            onViewCreated: (PDFViewController pdfViewController) {
-              _controller.complete(pdfViewController);
-            },
-            onPageChanged: (int page, int total) {
-              print('page change: $page/$total');
-              setState(() {
-                currentPage = page;
-              });
-            },
-          ),
-          errorMessage.isEmpty
-              ? !isReady
-                  ? Center(
-                      child: CircularProgressIndicator(),
-                    )
-                  : Container()
-              : Center(
-                  child: Text(errorMessage),
-                )
-        ],
-      ),
-      floatingActionButton: FutureBuilder<PDFViewController>(
-        future: _controller.future,
-        builder: (context, AsyncSnapshot<PDFViewController> snapshot) {
-          if (snapshot.hasData) {
-            return FloatingActionButton.extended(
-              label: Text("Go to ${pages ~/ 2}"),
-              onPressed: () async {
-                await snapshot.data.setPage(pages ~/ 2);
-              },
-            );
-          }
-
-          return Container();
-        },
+      body: Center(
+        child: downloading
+            ? Container(
+                height: 120.0,
+                width: 200.0,
+                child: Card(
+                  color: Colors.black,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      CircularProgressIndicator(),
+                      SizedBox(
+                        height: 20.0,
+                      ),
+                      Text(
+                        "Downloading File: $progressString",
+                        style: TextStyle(
+                          color: Colors.white,
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              )
+            : RaisedButton(
+                child: Text('Tap to open file'),
+                onPressed: openFile,
+              ),
       ),
     );
   }

@@ -51,16 +51,16 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                 Hero(
                   tag: 'logo',
                   child: Container(
-                    child: Image.asset('assets/img1.jpg'),
-                    height: 60.0,
-                    width: 60,
+                    child: Image.asset('assets/logo.png'),
+                    height: 80.0,
+
                   ),
                 ),
                 SizedBox(
                   width: 10,
                 ),
                 TypewriterAnimatedTextKit(
-                  text: ['Blockheads'],
+                  text: ['LearnOnGo'],
                   textStyle: TextStyle(
                     fontSize: 45.0,
                     fontWeight: FontWeight.w900,

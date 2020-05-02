@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:shapeup/pages/chapter_list.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+
 class ContentList extends StatefulWidget {
   final String subject_dir;
 

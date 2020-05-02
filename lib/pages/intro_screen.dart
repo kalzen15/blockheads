@@ -39,36 +39,36 @@ class _IntroScreenState extends State<IntroScreen> {
       key: introKey,
       pages: [
         PageViewModel(
-          title: "Fractional shares",
+          title: "View Books",
           body:
-              "Instead of having to buy an entire share, invest any amount you want.",
-          image: _buildImage('img1'),
+              "Get to view pdf of the NCERT syllabus on your phone",
+          image: _buildImage('img4'),
           decoration: pageDecoration,
         ),
         PageViewModel(
           title: "Learn as you go",
           body:
-              "Download the Stockpile app and master the market with our mini-lesson.",
+              "You have videos also to help u along",
           image: _buildImage('img2'),
           decoration: pageDecoration,
         ),
         PageViewModel(
-          title: "Kids and teens",
+          title: "Ask Doubts on the forum",
           body:
-              "Kids and teens can track their stocks 24/7 and place trades that you approve.",
+              "Get doubts cleared on the forum",
           image: _buildImage('img3'),
           decoration: pageDecoration,
         ),
         PageViewModel(
-          title: "Another title page",
-          body: "Another beautiful body text for this example onboarding",
-          image: _buildImage('img2'),
+          title: "Kids and teens",
+          body: "Is good for children to learn their syllabus at a fast pace",
+          image: _buildImage('img4'),
           footer: RaisedButton(
             onPressed: () {
               introKey.currentState?.animateScroll(0);
             },
             child: const Text(
-              'FooButton',
+              'Go Back',
               style: TextStyle(color: Colors.white),
             ),
             color: Colors.lightBlue,
@@ -79,13 +79,12 @@ class _IntroScreenState extends State<IntroScreen> {
           decoration: pageDecoration,
         ),
         PageViewModel(
-          title: "Title of last page",
+          title: "Lets get started",
           bodyWidget: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: const [
-              Text("Click on ", style: bodyStyle),
-              Icon(Icons.edit),
-              Text(" to edit a post", style: bodyStyle),
+              Text("Click on done", style: bodyStyle),
+
             ],
           ),
           image: _buildImage('img1'),

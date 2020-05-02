@@ -6,6 +6,7 @@ import 'package:shapeup/pages/subject_list.dart';
 import 'package:shapeup/pages/welcome_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+
 class ClassList extends StatelessWidget {
   FirebaseAuth _auth = FirebaseAuth.instance;
   static const String id = 'classes';
@@ -27,6 +28,7 @@ class ClassList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text("Class List "),
       ),
@@ -60,27 +62,16 @@ class ClassList extends StatelessWidget {
               builder: (_) => SubjectList("Class ${index + 1}"),
             ),
           ),
-          child: new Container(
-            child: Center(
-                child: Text(
-              "Class ${index + 1}",
-              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 22.0),
-            )),
-            decoration: BoxDecoration(
-                color: Color(0xFFf8fbf8),
-                borderRadius: BorderRadius.all(Radius.circular(30)),
-                boxShadow: [
-                  BoxShadow(
-                      color: Colors.grey[300],
-                      offset: Offset(10.0, 10.0),
-                      blurRadius: 10.0,
-                      spreadRadius: 2.0),
-                  BoxShadow(
-                      color: Colors.white,
-                      offset: Offset(-10.0, -10.0),
-                      blurRadius: 8.0,
-                      spreadRadius: 2.0)
-                ]),
+          child: Card(
+            color: Color(0xffefb864),
+            child: new Container(
+              child: Center(
+                  child: Text(
+                "Class ${index + 1}",
+                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 22.0),
+              )),
+              
+            ),
           ),
         ),
         staggeredTileBuilder: (int index) =>
