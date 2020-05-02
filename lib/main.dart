@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primaryColor: Color(0xFFff7361),
         // This makes the visual density adapt to the platform that you run
         // the app on. For desktop platforms, the controls will be smaller and
         // closer together (more dense) than on mobile platforms.
@@ -30,7 +30,6 @@ class MyApp extends StatelessWidget {
         ForgotPassword.id:(context)=>ForgotPassword(),
         WelcomeScreen.id:(context)=>WelcomeScreen(),
         RegistrationScreen.id:(context)=>RegistrationScreen(),
-        PdfViewer.id:(context)=>PdfViewer(),
         ClassList.id:(context)=>ClassList(),
       },
     );

@@ -2,7 +2,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:shapeup/pages/content_list.dart';
+import 'package:shapeup/pages/subject_list.dart';
 import 'package:shapeup/pages/welcome_screen.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ClassList extends StatelessWidget {
   FirebaseAuth _auth = FirebaseAuth.instance;
@@ -13,12 +15,20 @@ class ClassList extends StatelessWidget {
     Navigator.pushReplacementNamed(context, WelcomeScreen.id);
   }
 
+  _launchURL() async {
+    const String url='http://suyashchandra.tech/';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text("Class List "),
-
       ),
       drawer: Drawer(
         child: ListView(
@@ -27,7 +37,7 @@ class ClassList extends StatelessWidget {
             ListTile(
               leading: Icon(Icons.launch),
               title: Text("Forum"),
-              onTap: () {},
+              onTap:  _launchURL,
             ),
             ListTile(
               leading: Icon(Icons.exit_to_app),
@@ -47,7 +57,7 @@ class ClassList extends StatelessWidget {
           onTap: () => Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (_) => ContentList("Class ${index + 1}"),
+              builder: (_) => SubjectList("Class ${index + 1}"),
             ),
           ),
           child: new Container(

@@ -7,19 +7,24 @@ import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
 
-
 class PdfViewer extends StatefulWidget {
-  static const String id='pdf';
+  static const String id = 'pdf';
+  final url;
+
+  PdfViewer(this.url);
+
   @override
   _PdfViewerState createState() => _PdfViewerState();
 }
 
 class _PdfViewerState extends State<PdfViewer> {
-  String pathPDF = "";
+  String pathPDF = null;
   String corruptedPathPDF = "";
+  String url;
 
   @override
   void initState() {
+    url = widget.url;
     super.initState();
 //    fromAsset('assets/HackCoVIT2020_Problem_Statements.pdf', 'HackCoVIT2020_Problem_Statements.pdf').then((f) {
 //      setState(() {
@@ -31,26 +36,26 @@ class _PdfViewerState extends State<PdfViewer> {
 //        pathPDF = f.path;
 //      });
 //    });
-     createFileOfPdfUrl().then((f) {
-       setState(() {
-         pathPDF = f.path;
-         print(pathPDF);
-       });
-     });
+    createFileOfPdfUrl().then((f) {
+      setState(() {
+        pathPDF = f.path;
+        print(pathPDF);
+      });
+    });
   }
 
   Future<File> createFileOfPdfUrl() async {
-     final url =
-     "https://drive.google.com/open?id=1iy0Bs0R-diWB4eX-hkUC-F5-vNbKiT0h";
-//    final url = "https://cdscoonline.gov.in/CDSCO/resources/app_srv/cdsco/global/Online_Payment_User_Manual_v1.0.pdf";
-    final filename = "mypdf.pdf";
+    print(url);
+    final filename = url.substring(url.lastIndexOf("/") + 1);
     var request = await HttpClient().getUrl(Uri.parse(url));
     var response = await request.close();
     var bytes = await consolidateHttpClientResponseBytes(response);
     String dir = (await getApplicationDocumentsDirectory()).path;
     File file = new File('$dir/$filename');
     await file.writeAsBytes(bytes);
+    print("hello");
     return file;
+
   }
 
   Future<File> fromAsset(String asset, String filename) async {
@@ -60,14 +65,14 @@ class _PdfViewerState extends State<PdfViewer> {
     try {
       var dir = await getApplicationDocumentsDirectory();
       File file = File("${dir.path}/$filename");
+
       var data = await rootBundle.load(asset);
       var bytes = data.buffer.asUint8List();
-      File assetFile=await file.writeAsBytes(bytes, flush: true);
+      File assetFile = await file.writeAsBytes(bytes, flush: true);
       return assetFile;
     } catch (e) {
       throw Exception('Error parsing asset file!');
     }
-
   }
 
   @override
@@ -76,7 +81,7 @@ class _PdfViewerState extends State<PdfViewer> {
       title: 'Flutter PDF View',
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        appBar: AppBar(title: const Text('Plugin example app')),
+        appBar: AppBar(title: const Text('View Chapter')),
         body: Center(child: Builder(
           builder: (BuildContext context) {
             return Column(
@@ -94,20 +99,6 @@ class _PdfViewerState extends State<PdfViewer> {
                     }
                   },
                 ),
-                RaisedButton(
-                  child: Text("Open Corrupted PDF"),
-                  onPressed: () {
-                    if (pathPDF != null) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              PDFScreen(path: corruptedPathPDF),
-                        ),
-                      );
-                    }
-                  },
-                )
               ],
             );
           },
@@ -127,7 +118,7 @@ class PDFScreen extends StatefulWidget {
 
 class _PDFScreenState extends State<PDFScreen> with WidgetsBindingObserver {
   final Completer<PDFViewController> _controller =
-  Completer<PDFViewController>();
+      Completer<PDFViewController>();
   int pages = 0;
   int currentPage = 0;
   bool isReady = false;
@@ -185,13 +176,13 @@ class _PDFScreenState extends State<PDFScreen> with WidgetsBindingObserver {
           ),
           errorMessage.isEmpty
               ? !isReady
-              ? Center(
-            child: CircularProgressIndicator(),
-          )
-              : Container()
+                  ? Center(
+                      child: CircularProgressIndicator(),
+                    )
+                  : Container()
               : Center(
-            child: Text(errorMessage),
-          )
+                  child: Text(errorMessage),
+                )
         ],
       ),
       floatingActionButton: FutureBuilder<PDFViewController>(
